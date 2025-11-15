@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/mousigan/Maven-Project.git', branch: 'master'
+            }
+        }
+
+        stage('Build & Package') {
+            steps {
+                // Download dependencies, compile, package into JAR
+                sh 'mvn -B clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    // Record test results if using Jenkins
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+    }
+}
