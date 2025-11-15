@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+
+    triggers {
+        cron('* * * * *')   // Runs every minute
+    }
+
     stages {
         stage('Checkout') {
             steps {
